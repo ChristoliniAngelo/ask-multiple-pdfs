@@ -79,10 +79,16 @@ def handle_userinput(user_question):
     logging.info(f"Handled user input in {end_time - start_time:.2f} seconds")
 
     for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            st.write(user_template.replace("{{MSG}}", message['content']), unsafe_allow_html=True)
+        if isinstance(message, dict):
+            content = message.get('content', '')
         else:
-            st.write(bot_template.replace("{{MSG}}", message['content']), unsafe_allow_html=True)
+            # Jika message bukan dictionary, sesuaikan dengan jenis objeknya
+            content = getattr(message, 'content', '')
+
+        if i % 2 == 0:
+            st.write(user_template.replace("{{MSG}}", content), unsafe_allow_html=True)
+        else:
+            st.write(bot_template.replace("{{MSG}}", content), unsafe_allow_html=True)
 
 def main():
     load_dotenv()
